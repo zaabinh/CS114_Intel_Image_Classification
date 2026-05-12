@@ -54,12 +54,10 @@ Nhóm học sâu:
 
 ## 7. Kết quả, nhận xét
 Kết quả tổng quát:
-- Flatten + Logistic Regression: ~36%
-- Color Histogram + Logistic Regression: ~56%
-- HOG + Logistic Regression: ~72%
+- HOG + Logistic Regression: ~65%
 - HOG + RGB Histogram + SVM: ~79%
-- Simple CNN: ~87%
-- ResNet18 fine-tuned: ~92-93%
+- Simple CNN: ~88%
+- ResNet18 fine-tuned: ~93%
 
 Nhận xét:
 - HOG hiệu quả với thông tin cạnh/texture, nhưng còn hạn chế ngữ nghĩa.
@@ -68,7 +66,7 @@ Nhận xét:
 - Các cặp dễ nhầm: `glacier <-> mountain`, `buildings <-> street`, `sea <-> mountain`.
 
 ## 8. Hướng phát triển
-- Thử nghiệm thêm các kiến trúc mạnh hơn như EfficientNet, ConvNeXt, ViT.
-- Tăng cường kỹ thuật data augmentation để cải thiện khả năng tổng quát hóa.
-- Mở rộng phân tích giải thích mô hình bằng Grad-CAM/Explainable AI.
-- Tối ưu mô hình cho suy luận nhanh và triển khai thực tế.
+- Tối ưu hiệu suất mô hình hiện tại
+- Tối ưu cho triển khai thực tế
+- Thử nghiệm các kiến trúc Deep Learning mạnh hơn
+- Nghiên cứu phát triển ứng dụng thực tế cho bài toán
