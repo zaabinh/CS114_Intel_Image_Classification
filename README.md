@@ -1,72 +1,80 @@
-﻿# Intel Image Classification - CS114
+# Intel Scene Image Classification
 
-Môn học: `CS114 - Máy học`  
-Mã lớp: `CS114.Q24`  
-GVHD: `Huỳnh Tân Bối`
+A comparative machine learning study of handcrafted visual features, classical classifiers, convolutional neural networks and transfer learning for six-class scene recognition.
 
-Nhóm tác giả:
-- 23521187 - Nguyễn Văn Phú
-- 24520192 - Đoàn Hữu Gia Bình
-- 24521163 - Trần Bảo Ngọc
+**Best reported result:** ~93% accuracy using fine-tuned ResNet18.
 
-## 1. Tổng quan
-Đây là đồ án cuối kì, thực hiện bài toán **phân loại ảnh cảnh quan đa lớp** trên bộ dữ liệu Intel Image Classification.  
-Với mỗi ảnh đầu vào, mô hình dự đoán một trong 6 lớp: `buildings`, `forest`, `glacier`, `mountain`, `sea`, `street`.
+**Stack:** Python · NumPy · OpenCV · scikit-learn · PyTorch · torchvision · Jupyter
 
-## 2. Mục tiêu
-- Xây dựng pipeline phân loại ảnh từ tiền xử lý đến đánh giá mô hình.
-- So sánh các hướng tiếp cận truyền thống (ML) và học sâu (Deep Learning).
-- Phân tích lỗi sai để hiểu điểm mạnh/yếu của từng mô hình.
+## Problem and dataset
 
-## 3. Dataset
-- Tên bộ dữ liệu: **Intel Image Classification**.
-- Nguồn: Kaggle - https://www.kaggle.com/datasets/puneet6060/intel-image-classification
-- Số lớp: 6 lớp cảnh quan.
-- Kích thước ảnh sau tiền xử lý: `150x150`.
+Given a landscape or urban scene image, predict one of six categories: `buildings`, `forest`, `glacier`, `mountain`, `sea`, or `street`.
 
-Tiền xử lý chính:
-- Kiểm tra ảnh lỗi.
-- Phát hiện và loại ảnh trùng.
-- Chia tập train/validation/test.
-- Chuẩn hóa ảnh với:
-  - `MEAN = [0.43018116, 0.45747542, 0.45382798]`
-  - `STD = [0.26941103, 0.26793626, 0.29834034]`
+The project uses the [Intel Image Classification dataset](https://www.kaggle.com/datasets/puneet6060/intel-image-classification) from Kaggle. Images are processed at 150 × 150 pixels. The preprocessing workflow checks corrupted images, detects duplicates, prepares train/validation/test partitions and normalizes inputs for neural models.
 
-## 4. Các phương pháp
-Nhóm mô hình truyền thống:
-- Đặc trưng: Flatten Pixel, RGB Histogram, HOG, HOG + RGB Histogram.
-- Mô hình: Logistic Regression, KNN, SVM.
+## Methodology
 
-Nhóm học sâu:
-- Simple CNN.
-- ResNet18 (fine-tuning từ pretrained).
+```mermaid
+flowchart TD
+    A[Scene images] --> B[EDA and preprocessing]
+    B --> C[Dataset splits]
+    C --> D[Pixels / RGB histograms / HOG]
+    C --> E[Image tensors]
+    D --> F[Logistic Regression / KNN / SVM]
+    E --> G[Simple CNN / ResNet18]
+    F --> H[Evaluation and error analysis]
+    G --> H
+```
 
-## 5. Pipeline
-`Dataset -> Preprocessing -> Feature Extraction / Image Tensor -> Model Training -> Hyperparameter Tuning -> Evaluation -> Error Analysis`
+The experiments examine how different representations affect scene recognition:
 
-## 6. Công nghệ sử dụng
-- Python
-- NumPy, OpenCV
-- Scikit-learn
-- PyTorch, torchvision
-- Matplotlib
-- Jupyter Notebook
+- **Classical ML:** flattened pixels, RGB histograms, HOG and combined HOG + RGB features with Logistic Regression, KNN and SVM.
+- **Deep learning:** a simple CNN and fine-tuning of pretrained ResNet18.
+- **Evaluation:** model tuning, comparative accuracy and analysis of confusing scene categories; CNN evaluation includes a Grad-CAM notebook.
 
-## 7. Kết quả, nhận xét
-Kết quả tổng quát:
-- HOG + Logistic Regression: ~65%
-- HOG + RGB Histogram + SVM: ~79%
-- Simple CNN: ~88%
-- ResNet18 fine-tuned: ~93%
+## Experimental results
 
-Nhận xét:
-- HOG hiệu quả với thông tin cạnh/texture, nhưng còn hạn chế ngữ nghĩa.
-- Kết hợp HOG + RGB giúp cải thiện rõ rệt so với baseline ML.
-- Mô hình deep learning vượt trội hơn các đặc trưng thủ công.
-- Các cặp dễ nhầm: `glacier <-> mountain`, `buildings <-> street`, `sea <-> mountain`.
+| Method | Reported accuracy |
+| --- | ---: |
+| HOG + Logistic Regression | ~65% |
+| HOG + RGB Histogram + SVM | ~79% |
+| Simple CNN | ~88% |
+| Fine-tuned ResNet18 | **~93%** |
 
-## 8. Hướng phát triển
-- Tối ưu hiệu suất mô hình hiện tại
-- Tối ưu cho triển khai thực tế
-- Thử nghiệm các kiến trúc Deep Learning mạnh hơn
-- Nghiên cứu phát triển ứng dụng thực tế cho bài toán
+These approximate project-reported values are retained from the original experiment summary. Consult the notebooks for the corresponding splits, configurations and detailed outputs; they have not been independently rerun for this README.
+
+### Key observations
+
+Combined color and gradient features improve on the HOG-only baseline, while learned CNN representations achieve higher reported accuracy. Common confusions include glacier versus mountain, buildings versus street, and sea versus mountain. These categories share textures, structures or visual context that can make their boundaries ambiguous.
+
+## Reproduce the experiments
+
+Download the dataset using the source above. Create a Python environment with Jupyter, NumPy, OpenCV, scikit-learn, PyTorch, torchvision, Matplotlib and Gradio (for the demo). This repository does not currently provide a pinned dependency manifest, so check notebook-specific imports and data paths before execution.
+
+| Stage | Notebook |
+| --- | --- |
+| Exploratory data analysis | [01_eda](notebooks/01_eda.ipynb) |
+| Data preprocessing | [02_preprocessing](notebooks/02_preprocessing.ipynb) |
+| Classical baselines | [03_baselines](notebooks/03_baselines.ipynb) |
+| Model tuning | [04_tuning](notebooks/04_tuning.ipynb) |
+| Combined visual features and SVM | [05_HOG_RGB_SVM](notebooks/05_HOG_RGB_SVM.ipynb) |
+| CNN training | [06_cnn_train](notebooks/06_cnn_train.ipynb) |
+| Classical model error analysis | [07_error_analysis](notebooks/07_error_analysis_for_logistic_hog.ipynb) |
+| CNN evaluation and Grad-CAM | [08_cnn_evaluation](notebooks/08_cnn_evaluation_full_gradcam.ipynb) |
+| Interactive SVM demo | [09_gradio_demo](notebooks/09_gradio_demo_intel_image_project_SVM_HOG_RGB.ipynb) |
+
+The demo notebook is available for interactive exploration; a hosted service is not claimed.
+
+## Limitations and future work
+
+Further work includes measuring inference cost, documenting exact experiment dependencies and validating performance on images outside the dataset. Accuracy on this benchmark is not a guarantee of generalization to arbitrary scenes.
+
+## Contributors
+
+Academic team project — CS114 Machine Learning, University of Information Technology (VNU-HCM).
+
+- Nguyễn Văn Phú
+- Đoàn Hữu Gia Bình
+- Trần Bảo Ngọc
+
+Supervisor: Huỳnh Tân Bối.
